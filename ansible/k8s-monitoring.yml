@@ -1,0 +1,37 @@
+---
+- name: Install Helm and deploy monitoring stack
+  hosts: controlplane
+  become: yes
+  tasks:
+    - name: Install Helm
+      shell: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Set correct ownership for kubectl config
+      file:
+        path: /home/ubuntu/.kube
+        owner: ubuntu
+        group: ubuntu
+        recurse: yes
+
+    - name: Add prometheus-community helm repository
+      shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      become_user: ubuntu
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+
+    - name: Update helm repositories
+      shell: helm repo update
+      become_user: ubuntu
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+
+    - name: Install kube-prometheus-stack
+      shell: helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace --timeout 10m
+      become_user: ubuntu
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+      register: helm_install_result
+      failed_when: helm_install_result.rc != 0 and 'already exists' not in helm_install_result.stderr

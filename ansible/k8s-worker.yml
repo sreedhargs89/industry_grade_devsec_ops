@@ -1,0 +1,9 @@
+---
+- name: Join worker nodes to cluster
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Join cluster
+      command: kubeadm join 10.0.1.125:6443 --token o6vr36.r5zi0wxilxtcym8w --discovery-token-ca-cert-hash sha256:64739a8282ccb19d7fcc35511c8875b601525e037787019de8a4ab46aea0e1ac
+      args:
+        creates: /etc/kubernetes/kubelet.conf
