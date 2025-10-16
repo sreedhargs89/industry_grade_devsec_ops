@@ -1,61 +1,99 @@
-# Industry Grade DevSecOps Infrastructure
+# Simple DevSecOps Infrastructure
 
-This directory contains production-ready Terraform infrastructure code for deploying secure, scalable, and monitored cloud infrastructure following DevSecOps best practices.
+Simple Terraform setup to create a basic AWS infrastructure with VPC, subnets, and EC2 instance.
 
-## 🏗️ Architecture Overview
+## What This Creates
 
-The infrastructure creates a secure, multi-tier AWS environment with:
+- **VPC**: Virtual Private Cloud (10.0.0.0/16)
+- **Public Subnet**: For internet-facing resources (10.0.1.0/24)
+- **Private Subnet**: For internal resources (10.0.2.0/24)
+- **Internet Gateway**: For internet access
+- **Security Group**: Allow SSH, HTTP, and HTTPS
+- **EC2 Instance**: Web server with Apache installed
+
+## Architecture
 
 ```
-                    ┌─────────────────────────────────────┐
-                    │             Internet                │
-                    └─────────────────┬───────────────────┘
-                                      │
-                    ┌─────────────────┴───────────────────┐
-                    │         Internet Gateway            │
-                    └─────────────────┬───────────────────┘
-                                      │
-         ┌─────────────────────────────┼─────────────────────────────┐
-         │                 VPC (10.0.0.0/16)                     │
-         │                                                        │
-         │  ┌─────────────────────┐    ┌─────────────────────┐    │
-         │  │   Public Subnet 1   │    │   Public Subnet 2   │    │
-         │  │    10.0.1.0/24      │    │    10.0.2.0/24      │    │
-         │  │                     │    │                     │    │
-         │  │  ┌─────────────┐    │    │      ┌─────────┐    │    │
-         │  │  │   Bastion   │    │    │      │   ALB   │    │    │
-         │  │  │    Host     │    │    │      │         │    │    │
-         │  │  └─────────────┘    │    │      └─────────┘    │    │
-         │  └─────────────────────┘    └─────────────────────┘    │
-         │             │                           │              │
-         │  ┌─────────────────────┐    ┌─────────────────────┐    │
-         │  │  Private Subnet 1   │    │  Private Subnet 2   │    │
-         │  │   10.0.11.0/24      │    │   10.0.12.0/24      │    │
-         │  │                     │    │                     │    │
-         │  │  ┌─────────────┐    │    │  ┌─────────────┐    │    │
-         │  │  │App Servers  │    │    │  │App Servers  │    │    │
-         │  │  │(Auto Scaling│    │    │  │(Auto Scaling│    │    │
-         │  │  │   Group)    │    │    │  │   Group)    │    │    │
-         │  │  └─────────────┘    │    │  └─────────────┘    │    │
-         │  └─────────────────────┘    └─────────────────────┘    │
-         │             │                           │              │
-         │          ┌─────┐                   ┌─────┐             │
-         │          │ NAT │                   │ NAT │             │
-         │          │ GW  │                   │ GW  │             │
-         │          └─────┘                   └─────┘             │
-         └─────────────────────────────────────────────────────────┘
+Internet
+    |
+Internet Gateway
+    |
+┌─────────────────────────────┐
+│         VPC                 │
+│       10.0.0.0/16           │
+│                             │
+│  ┌─────────────────────┐    │
+│  │  Public Subnet      │    │
+│  │   10.0.1.0/24       │    │
+│  │                     │    │
+│  │  ┌─────────────┐    │    │
+│  │  │ EC2 Web     │    │    │
+│  │  │ Server      │    │    │
+│  │  └─────────────┘    │    │
+│  └─────────────────────┘    │
+│                             │
+│  ┌─────────────────────┐    │
+│  │  Private Subnet     │    │
+│  │   10.0.2.0/24       │    │
+│  │                     │    │
+│  └─────────────────────┘    │
+└─────────────────────────────┘
 ```
 
-### Key Components
+## Quick Start
 
-- **VPC**: Dedicated virtual network with DNS support
-- **Subnets**: Public and private subnets across multiple AZs
-- **Security Groups**: Fine-grained network access control
-- **WAF**: Web Application Firewall for DDoS and attack protection
-- **Auto Scaling**: Automatic scaling based on demand
-- **Load Balancer**: Application Load Balancer with health checks
-- **Monitoring**: CloudWatch logging and metrics
-- **Security**: Comprehensive security hardening and compliance
+### Prerequisites
+- AWS CLI configured
+- Terraform installed
+- (Optional) AWS Key Pair created
+
+### Deploy
+
+1. **Navigate to terraform directory:**
+   ```bash
+   cd infrastructure/terraform
+   ```
+
+2. **Copy and edit configuration:**
+   ```bash
+   cp terraform.tfvars.example terraform.tfvars
+   # Edit terraform.tfvars and add your key_pair_name if you want SSH access
+   ```
+
+3. **Deploy infrastructure:**
+   ```bash
+   terraform init
+   terraform plan
+   terraform apply
+   ```
+
+4. **Get outputs:**
+   ```bash
+   terraform output
+   ```
+
+### Access Your Instance
+
+After deployment:
+- **Web Server**: Visit the `web_url` from terraform output
+- **SSH**: Use the `ssh_command` from terraform output (if key pair specified)
+
+### Clean Up
+
+```bash
+terraform destroy
+```
+
+## What's Included
+
+- **Simple VPC setup** with public and private subnets
+- **EC2 instance** with Apache web server pre-installed
+- **Security group** allowing HTTP, HTTPS, and SSH access
+- **Basic networking** with Internet Gateway and routing
+
+---
+
+**Perfect for learning Terraform and AWS basics!**
 
 ## 🔐 Security Features
 

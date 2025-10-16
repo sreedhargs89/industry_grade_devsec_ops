@@ -1,38 +1,14 @@
-# Industry Grade DevSecOps Infrastructure Configuration
+# Simple DevSecOps Infrastructure Configuration
 # Copy this file to terraform.tfvars and customize for your environment
 
-# Project Configuration
 project_name = "devsecops"
-environment  = "dev"  # Options: dev, staging, prod
-owner        = "DevSecOps-Team"
-
-# AWS Configuration
 aws_region = "us-east-1"
 
 # Network Configuration
-vpc_cidr                = "10.0.0.0/16"
-public_subnet_cidrs     = ["10.0.1.0/24", "10.0.2.0/24"]
-private_subnet_cidrs    = ["10.0.11.0/24", "10.0.12.0/24"]
-
-# NAT Gateway Configuration (set single_nat_gateway = false for HA)
-enable_nat_gateway  = true
-single_nat_gateway  = true
-
-# Security Configuration
-ssh_cidr_blocks = ["0.0.0.0/0"]  # SECURITY WARNING: Restrict this in production!
+vpc_cidr = "10.0.0.0/16"
+public_subnet_cidr = "10.0.1.0/24"
+private_subnet_cidr = "10.0.2.0/24"
 
 # EC2 Configuration
-instance_type = "t3.micro"  # For production, consider t3.small or larger
-key_pair_name = ""          # Add your AWS key pair name here
-
-# Monitoring
-enable_detailed_monitoring = true
-
-# Auto Scaling Configuration
-min_size         = 1
-max_size         = 3
-desired_capacity = 2
-
-# Logging Configuration
-enable_flow_logs              = true
-flow_logs_retention_days      = 30
+instance_type = "t3.micro"
+key_pair_name = ""  # Add your AWS key pair name here
